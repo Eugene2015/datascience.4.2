@@ -4,7 +4,7 @@
 #             output.file.name [optional] - name of the output file
 #             image.width      [optional] - width of the image to be generated
 #             image.height     [optional] - height of the image to be generated
-plot1<-function(dir.working = "./", output.file.name="plot1.png", image.width=800, image.height=600){
+plot2<-function(dir.working = "./", output.file.name="plot2.png", image.width=800, image.height=600){
     
     subfolder = "./dataset"
     
@@ -41,23 +41,25 @@ plot1<-function(dir.working = "./", output.file.name="plot1.png", image.width=80
         unlink(archive.file.name);
     }
 
-    # second step - load datasets internally
-    #dsNEI <- readRDS(dataset.file.name.1)
+    # second step - prepare dataset
+    # -- load dataset
+    dsNEI <- readRDS(dataset.file.name.1);
+    # -- filter dataset
+    dsNEI <- dsNEI[dsNEI$fips == "24510", ];
+    # -- create aggregation
+    dsAGG<-ddply(dsNEI, .(year), summarize, mean=mean(Emissions));
+
     #dsSCC <- readRDS(dataset.file.name.2)
-    
-    dsw<-ddply(readRDS(dataset.file.name.1), .(year), summarize, mean=mean(Emissions))
-    m<-lm(mean~year, dsw);
 
     # generate image
     # -- create context
     png(output.file.name, width=image.width, height=image.height, bg="white");
 
-    # -- create 
-    plot(dsw$year, dsw$mean, type="p", pch=19, xlab="year", ylab="Average amount of PM2.5 emitted, tons", col="dark red", main="PM2.5 emission change in the United States");
-    lines(dsw$year, dsw$mean, type="h", col="grey", lty=3);
-    abline(model, col="blue", lty=3);
-    
-    # finish
+
+    # -- create second
+    plot(dsAGG$year, dsAGG$mean, type="b", pch=19, xlab="year", ylab="Average amount of PM2.5 emitted, tons", col="blue", main="PM2.5 emission change in Baltimore City, Maryland");
+    lines(dsAGG$year, dsAGG$mean, type="h", col="grey", lty=3);
+    # -- finish
     dev.off();
     
     # restore original working directory
