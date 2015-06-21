@@ -47,7 +47,7 @@ plot5<-function(dir.working = "./", output.file.name="plot5.png", image.width=80
     dsNEI <- readRDS(dataset.file.name.1);
     dsSCC <- readRDS(dataset.file.name.2);
     
-    # -- filter datasets
+    # -- filter datasets 
     # -- -- Baltimore only
     dsNEI <- dsNEI[dsNEI$fips == "24510", ];
     # -- vehicles (all kind)

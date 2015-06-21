@@ -49,7 +49,7 @@ plot2<-function(dir.working = "./", output.file.name="plot2.png", image.width=80
     # -- create aggregation
     dsAGG<-ddply(dsNEI, .(year), summarize, mean=mean(Emissions));
 
-    # generate image
+    # generate image 
     # -- create context
     png(output.file.name, width=image.width, height=image.height, bg="white");
 

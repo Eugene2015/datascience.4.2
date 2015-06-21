@@ -46,7 +46,7 @@ plot1<-function(dir.working = "./", output.file.name="plot1.png", image.width=80
     #dsSCC <- readRDS(dataset.file.name.2)
     
     dsw<-ddply(readRDS(dataset.file.name.1), .(year), summarize, mean=mean(Emissions))
-    m<-lm(mean~year, dsw);
+    model<-lm(mean~year, dsw);
 
     # generate image
     # -- create context
