@@ -1,12 +1,13 @@
-# Function that builds 1st  plot. Assumes that package 'plyr' is loaded into workspace
+# Function that builds 5th plot. Assumes that package 'ggplot2' is loaded into workspace
 # Parameters :
 #             dir.working      [optional] - folder that will contain generated image
 #             output.file.name [optional] - name of the output file
 #             image.width      [optional] - width of the image to be generated
 #             image.height     [optional] - height of the image to be generated
-plot1<-function(dir.working = "./", output.file.name="plot1.png", image.width=800, image.height=600){
+plot5<-function(dir.working = "./", output.file.name="plot5.png", image.width=800, image.height=600){
     
-    subfolder = "./dataset"
+    subfolder = "./dataset";
+    resolution = 150;
     
     archive.file.name = sprintf("%s/archive.zip", subfolder);
     dataset.file.name.1 = sprintf("%s/summarySCC_PM25.rds", subfolder);
@@ -41,25 +42,33 @@ plot1<-function(dir.working = "./", output.file.name="plot1.png", image.width=80
         unlink(archive.file.name);
     }
 
-    # second step - load datasets internally
-    #dsNEI <- readRDS(dataset.file.name.1)
-    #dsSCC <- readRDS(dataset.file.name.2)
+    # second step - prepare dataset
+    # -- load dataset
+    dsNEI <- readRDS(dataset.file.name.1);
+    dsSCC <- readRDS(dataset.file.name.2);
     
-    dsw<-ddply(readRDS(dataset.file.name.1), .(year), summarize, mean=mean(Emissions))
-    m<-lm(mean~year, dsw);
+    # -- filter datasets
+    # -- -- Baltimore only
+    dsNEI <- dsNEI[dsNEI$fips == "24510", ];
+    # -- vehicles (all kind)
+    dsSCC<-dsSCC[grepl("vehicle", dsSCC$EI.Sector, ignore.case=T), ];
+    filter<-dsNEI$SCC %in% dsSCC$SCC
+    dsNEI <- dsNEI[filter,];
+  
+    # -- convert year column to factor so it will be labeled properly.
+    dsNEI$year<-factor(dsNEI$year);
 
     # generate image
-    # -- create context
-    png(output.file.name, width=image.width, height=image.height, bg="white");
+    # -- draw it
+    pl<- ggplot(dsNEI, aes(x=year, y=Emissions)) + 
+         stat_summary(fun.y="mean", geom = "bar", fill="steelblue", alpha=3/4, color="black") +  
+         ggtitle("Changes in emission from vehicle-related sources in Baltimore City") + 
+         theme(plot.title = element_text(size=10, face="bold", vjust=2, hjust = 2), axis.title=element_text(size=9)) +
+         ylab(expression("Average amount of " * PM[2.5] * " emitted, tons"));
+    
+    # -- save ti
+    ggsave(filename = output.file.name, plot = pl, width = image.width/resolution, height=image.height/resolution, dpi=resolution);
 
-    # -- create 
-    plot(dsw$year, dsw$mean, type="p", pch=19, xlab="year", ylab="Average amount of PM2.5 emitted, tons", col="dark red", main="PM2.5 emission change in the United States");
-    lines(dsw$year, dsw$mean, type="h", col="grey", lty=3);
-    abline(model, col="blue", lty=3);
-    
-    # finish
-    dev.off();
-    
     # restore original working directory
     setwd(dir.current);
     

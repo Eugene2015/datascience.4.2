@@ -58,8 +58,9 @@ plot4<-function(dir.working = "./", output.file.name="plot4.png", image.width=80
     # generate image
     # -- draw it
     pl<- ggplot(dsNEI, aes(x=year, y=Emissions)) + 
-         stat_summary(fun.y="mean", geom = "bar", fill="steelblue", alpha=1/2) +  
-         ggtitle("Changes in emission from coal combustion-related sources") + 
+         stat_summary(fun.y="mean", geom = "bar", color="black", fill="steelblue", alpha=3/4) +  
+         ggtitle("Changes in emission from coal combustion-related sources across the USA") + 
+         theme(plot.title = element_text(size=9, face="bold", vjust=2), axis.title=element_text(size=8)) +
          ylab(expression("Average amount of " * PM[2.5] * " emitted, tons"));
     
     # -- save ti

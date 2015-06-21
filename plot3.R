@@ -48,15 +48,14 @@ plot3<-function(dir.working = "./", output.file.name="plot3.png", image.width=80
     # -- filter dataset
     dsNEI <- dsNEI[dsNEI$fips == "24510", ];
 
-        #dsSCC <- readRDS(dataset.file.name.2)
-
     # generate image
     # -- draw it
     pl<- ggplot(dsNEI, aes(x=year, y=Emissions, group = type)) + 
                 stat_summary(fun.y="mean", geom = c("point")) + 
-                facet_grid(type~., scales="free") + 
+                facet_grid(type~., scales="free", ) + 
                 geom_smooth(method="loess") + 
-                ggtitle("Changes in emission for Baltimore city by source type") + 
+                theme(plot.title = element_text(size=9, face="bold", vjust=2), axis.title=element_text(size=8), strip.text.y = element_text(size=5)) +
+                ggtitle("Changes in emission in Baltimore city by source type") + 
                 ylab(expression("Average amount of " * PM[2.5] * " emitted, tons"));
     
     # -- save ti

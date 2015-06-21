@@ -1,4 +1,4 @@
-# Function that builds 1st  plot
+# Function that builds 2nd plot. Assumes that package 'plyr' is loaded into workspace
 # Parameters :
 #             dir.working      [optional] - folder that will contain generated image
 #             output.file.name [optional] - name of the output file
@@ -48,8 +48,6 @@ plot2<-function(dir.working = "./", output.file.name="plot2.png", image.width=80
     dsNEI <- dsNEI[dsNEI$fips == "24510", ];
     # -- create aggregation
     dsAGG<-ddply(dsNEI, .(year), summarize, mean=mean(Emissions));
-
-    #dsSCC <- readRDS(dataset.file.name.2)
 
     # generate image
     # -- create context
